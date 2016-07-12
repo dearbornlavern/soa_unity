@@ -2,7 +2,7 @@
 using System.Collections;
 using soa;
 
-public class SoaJammer : MonoBehaviour {
+public class SoaJammer : MonoBehaviour, ISoaJammer {
 
     SoaActor thisSoaActor;
     
@@ -18,4 +18,14 @@ public class SoaJammer : MonoBehaviour {
     {
         return thisSoaActor.getPositionVector_km();
     }
+
+	public ISoaActor getActor()
+	{
+		return thisSoaActor;
+	}
+
+	public float getEffectiveRangeKm()
+	{
+		return effectiveRange_km;
+	}
 }

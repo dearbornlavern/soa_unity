@@ -19,7 +19,7 @@ public class BluePoliceSim : MonoBehaviour
     SoaActor thisSoaActor;
 
     // Local copy of belief dictionary
-    SortedDictionary<int, Belief> actorBeliefs;
+    IEnumerable<Belief_Actor> actorBeliefs;
 
     // Local copy of red units
     Dictionary<int, RedUnitInfo> redUnitDatabase;
@@ -173,7 +173,7 @@ public class BluePoliceSim : MonoBehaviour
             updateProtectedSiteCasualtyCount();
 
             // Get the latest belief dictionary and red unit list from SoaActor
-            actorBeliefs = gameObject.GetComponent<SoaActor>().getDictionaryFor(Belief.BeliefType.ACTOR);
+            actorBeliefs = gameObject.GetComponent<SoaActor>().FindAllBeliefs<Belief_Actor>(Belief.BeliefType.ACTOR);
 
             // Update red unit database
             updateRedUnitDatabase();
@@ -226,7 +226,7 @@ public class BluePoliceSim : MonoBehaviour
         redUnits.AddRange(GameObject.FindGameObjectsWithTag("RedDismount"));
 
         // Loop through all actor beliefs and update the database
-        foreach (Belief b in actorBeliefs.Values)
+        foreach (Belief_Actor b in actorBeliefs)
         {
             // We care only about red units
             Belief_Actor ba = (Belief_Actor)b;

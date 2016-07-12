@@ -321,11 +321,7 @@ namespace soa
                         AddAttribute(xmlDoc, node, "z_km", siteConfig.z_km.ToString());
                         break;
                     default:
-                        #if(UNITY_STANDALONE)
-                        Debug.LogError("SoaConfigXMLWriter::PopulateSites(): Unrecognized config type " + siteConfig.GetConfigType() + " in soaConfig.sites");
-                        #else
-                        Console.WriteLine("SoaConfigXMLWriter::PopulateSites(): Unrecognized config type " + siteConfig.GetConfigType() + " in soaConfig.sites");
-                        #endif
+                        Log.error("SoaConfigXMLWriter::PopulateSites(): Unrecognized config type " + siteConfig.GetConfigType() + " in soaConfig.sites");
                         break;
                 }
             }
@@ -358,11 +354,7 @@ namespace soa
                         PopulateBluePolice(xmlDoc, node, (BluePoliceConfig)p);
                         break;
                     default:
-                        #if(UNITY_STANDALONE)
-                        Debug.LogError("SoaConfigXMLWriter::PopulateLocal(): Unrecognized config type " + p.GetConfigType() + " in soaConfig.localPlatforms");
-                        #else
-                        Console.WriteLine("SoaConfigXMLWriter::PopulateLocal(): Unrecognized config type " + p.GetConfigType() + " in soaConfig.localPlatforms");
-                        #endif
+                        Log.error("SoaConfigXMLWriter::PopulateLocal(): Unrecognized config type " + p.GetConfigType() + " in soaConfig.localPlatforms");
                         break;
                 }
             }
@@ -389,11 +381,7 @@ namespace soa
                         PopulateBlueBalloon(xmlDoc, node, (BlueBalloonConfig)p);
                         break;
                     default:
-                        #if(UNITY_STANDALONE)
-                        Debug.LogError("SoaConfigXMLWriter::PopulateRemote(): Unrecognized config type " + p.GetConfigType() + " in soaConfig.remotePlatforms");
-                        #else
-                        Console.WriteLine("SoaConfigXMLWriter::PopulateRemote(): Unrecognized config type " + p.GetConfigType() + " in soaConfig.remotePlatforms");
-                        #endif
+                        Log.error("SoaConfigXMLWriter::PopulateRemote(): Unrecognized config type " + p.GetConfigType() + " in soaConfig.remotePlatforms");
                         break;
                 }
             }

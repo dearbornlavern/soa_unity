@@ -119,13 +119,9 @@ public class HeavyUAVSim : MonoBehaviour
     // Checks current inventory and belief to determine the number of casualties to deliver
     private int RequestCasualtyDelivery(int currentInventory)
     {
-        // Get the belief dictionary and belief
-        SortedDictionary<int, Belief> specificBeliefDictionary = thisSoaActor.getDictionaryFor(soa.Belief.BeliefType.CASUALTY_DELIVERY);
-        Belief belief;
-        if (specificBeliefDictionary.TryGetValue(thisSoaActor.unique_id, out belief))
+        Belief_Casualty_Delivery b = thisSoaActor.Find<Belief_Casualty_Delivery>(soa.Belief.BeliefType.CASUALTY_DELIVERY, thisSoaActor.unique_id);
+        if (b != null)
         {
-            // Get the delivery belief
-            Belief_Casualty_Delivery b = (Belief_Casualty_Delivery)belief;
             if (b.getGreedy() || b.getMultiplicity() < 0)
             {
                 // Greedy behavior, deliver all of current inventory.  No information to update
@@ -143,8 +139,7 @@ public class HeavyUAVSim : MonoBehaviour
                     Belief_Casualty_Delivery newBelief = new Belief_Casualty_Delivery(
                         b.getRequest_time(), b.getActor_id(),
                         b.getGreedy(), b.getMultiplicity() - quantityToDeliver);
-                    thisSoaActor.addBeliefToUnmergedBeliefDictionary(newBelief);
-                    thisSoaActor.mergeBeliefDictionary();
+                    thisSoaActor.addBeliefToBeliefDictionary(newBelief);
                 }
 
                 // Return the quantity to deliver
@@ -164,13 +159,9 @@ public class HeavyUAVSim : MonoBehaviour
         // Floor the supply count
         int flooredSupplyCount = (int)Mathf.Floor(availableSupplyCount);
 
-        // Get the belief dictionary and belief
-        SortedDictionary<int, Belief> specificBeliefDictionary = thisSoaActor.getDictionaryFor(soa.Belief.BeliefType.SUPPLY_PICKUP);
-        Belief belief;
-        if (specificBeliefDictionary.TryGetValue(thisSoaActor.unique_id, out belief))
+        Belief_Supply_Pickup b = thisSoaActor.Find<Belief_Supply_Pickup>(soa.Belief.BeliefType.SUPPLY_PICKUP, thisSoaActor.unique_id);
+        if (b != null)
         {
-            // Get the pickup belief
-            Belief_Supply_Pickup b = (Belief_Supply_Pickup)belief;
             if (b.getGreedy() || b.getMultiplicity() < 0)
             {
                 // Greedy behavior, pickup as much as you can.  No information to update
@@ -190,8 +181,7 @@ public class HeavyUAVSim : MonoBehaviour
                     Belief_Supply_Pickup newBelief = new Belief_Supply_Pickup(
                         b.getRequest_time(), b.getActor_id(),
                         b.getGreedy(), b.getMultiplicity() - quantityToPickup);
-                    thisSoaActor.addBeliefToUnmergedBeliefDictionary(newBelief);
-                    thisSoaActor.mergeBeliefDictionary();
+                    thisSoaActor.addBeliefToBeliefDictionary(newBelief);
                 }
 
                 // Return the quantity to pickup
@@ -209,13 +199,9 @@ public class HeavyUAVSim : MonoBehaviour
     private int RequestSupplyDelivery(int currentInventory, int destinationId)
     {
         // Get the belief dictionary and belief
-        SortedDictionary<int, Belief> specificBeliefDictionary = thisSoaActor.getDictionaryFor(soa.Belief.BeliefType.SUPPLY_DELIVERY);
-        Belief belief;
-        if (specificBeliefDictionary.TryGetValue(thisSoaActor.unique_id, out belief))
+        Belief_Supply_Delivery b = thisSoaActor.Find<Belief_Supply_Delivery>(soa.Belief.BeliefType.SUPPLY_DELIVERY, thisSoaActor.unique_id);
+        if (b != null)
         {
-            // Get the delivery belief
-            Belief_Supply_Delivery b = (Belief_Supply_Delivery)belief;
-            
             // Lookup destination id's multiplicity, no entry defaults to 0
             int[] ids = b.getIds();
             int[] multiplicity = b.getMultiplicity();
@@ -250,8 +236,7 @@ public class HeavyUAVSim : MonoBehaviour
                     Belief_Supply_Delivery newBelief = new Belief_Supply_Delivery(
                         b.getRequest_time(), b.getActor_id(),
                         b.getGreedy(), ids, multiplicity);
-                    thisSoaActor.addBeliefToUnmergedBeliefDictionary(newBelief);
-                    thisSoaActor.mergeBeliefDictionary();
+                    thisSoaActor.addBeliefToBeliefDictionary(newBelief);
                 }
 
                 // Return the quantity to deliver
@@ -270,15 +255,11 @@ public class HeavyUAVSim : MonoBehaviour
     {
         // Floor the supply count
         int flooredSupplyCount = (int)Mathf.Floor(availableSupplyCount);
-        
-        // Get the belief dictionary and belief
-        SortedDictionary<int, Belief> specificBeliefDictionary = thisSoaActor.getDictionaryFor(soa.Belief.BeliefType.CASUALTY_PICKUP);
-        Belief belief;
-        if (specificBeliefDictionary.TryGetValue(thisSoaActor.unique_id, out belief))
-        {
-            // Get the pickup belief
-            Belief_Casualty_Pickup b = (Belief_Casualty_Pickup)belief;
 
+        // Get the belief dictionary and belief
+        Belief_Casualty_Pickup b = thisSoaActor.Find<Belief_Casualty_Pickup>(soa.Belief.BeliefType.CASUALTY_PICKUP, thisSoaActor.unique_id);
+        if (b != null)
+        {
             // Lookup destination id's multiplicity, no entry defaults to 0
             int[] ids = b.getIds();
             int[] multiplicity = b.getMultiplicity();
@@ -315,8 +296,7 @@ public class HeavyUAVSim : MonoBehaviour
                     Belief_Casualty_Pickup newBelief = new Belief_Casualty_Pickup(
                         b.getRequest_time(), b.getActor_id(),
                         b.getGreedy(), ids, multiplicity);
-                    thisSoaActor.addBeliefToUnmergedBeliefDictionary(newBelief);
-                    thisSoaActor.mergeBeliefDictionary();
+                    thisSoaActor.addBeliefToBeliefDictionary(newBelief);
                 }
 
                 // Return the quantity to pickup

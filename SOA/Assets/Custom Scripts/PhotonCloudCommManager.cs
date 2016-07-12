@@ -16,7 +16,7 @@ namespace soa
     /// <summary>
     /// Facilitates communication of Belief objects over Photon Cloud network.
     /// </summary>
-    public class PhotonCloudCommManager : LoadBalancingClient
+    public class PhotonCloudCommManager : LoadBalancingClient, ICommManager
     {
         // Reference to data manager
         private DataManager dataManager;
@@ -105,6 +105,15 @@ namespace soa
             this.MasterServerAddress = ipAddress;
         }
 
+        public void addNewActor(int actorID, BeliefRepository repo)
+        {
+
+        }
+        public string getConnectionForAgent(int agentID)
+        {
+            return "";
+        }
+
         /// <summary>
         /// Starts the communication manager 
         /// </summary>
@@ -128,20 +137,12 @@ namespace soa
 
                     // Wait for it to start up
                     while (!photonUpdateThread.IsAlive) ;
-                    #if(UNITY_STANDALONE)
-                    Debug.Log("PhotonCloudCommManager: Update thread started");
-                    #else
-                    Console.WriteLine("PhotonCloudCommManager: Update thread started");
-                    #endif
+                    Log.debug("PhotonCloudCommManager: Update thread started");
                 }
                 else
                 {
                     // Photon update thread already running, no need to do anything else
-                    #if(UNITY_STANDALONE)
-                    Debug.Log("PhotonCloudCommManager: start() has no effect, update thread already running");
-                    #else
-                    Console.WriteLine("PhotonCloudCommManager: start() has no effect, update thread already running");
-                    #endif
+                    Log.debug("PhotonCloudCommManager: start() has no effect, update thread already running");
                 }
             } // Unlock
         }
@@ -158,11 +159,7 @@ namespace soa
                 if (!startEligible)
                 {
                     // Request to disconnect has been sent
-                    #if(UNITY_STANDALONE)
-                    Debug.Log("PhotonCloudCommManager: Termination request sent");
-                    #else
-                    Console.WriteLine("PhotonCloudCommManager: Termination request sent");
-                    #endif
+                    Log.debug("PhotonCloudCommManager: Termination request sent");
                     terminateRequested = true;
 
                     // Wait for termination
@@ -172,20 +169,12 @@ namespace soa
                     startEligible = true;
 
                     // Notify that comm manager has been terminated
-                    #if(UNITY_STANDALONE)
-                    Debug.Log("PhotonCloudCommManager: Termination successful");
-                    #else
-                    Console.WriteLine("PhotonCloudCommManager: Termination successful");
-                    #endif
+                    Log.debug("PhotonCloudCommManager: Termination successful");
                 }
                 else
                 {
                     // Photon update thread already inactive, no need to do anything else
-                    #if(UNITY_STANDALONE)
-                    Debug.Log("PhotonCloudCommManager: terminate() has no effect, update thread already inactive");
-                    #else
-                    Console.WriteLine("PhotonCloudCommManager: terminate() has no effect, update thread already inactive");
-                    #endif
+                    Log.debug("PhotonCloudCommManager: terminate() has no effect, update thread already inactive");
                 }
             } // Unlock
         }
@@ -201,11 +190,7 @@ namespace soa
                 // Print internal state
                 if (prevState != State)
                 {
-                    #if(UNITY_STANDALONE)
-                    Debug.Log("PhotonCloudCommManager: " + prevState + " -> " + State);
-                    #else
-                    Console.WriteLine("PhotonCloudCommManager: " + prevState + " -> " + State);
-                    #endif
+                    Log.debug("PhotonCloudCommManager: " + prevState + " -> " + State);
                     prevState = State;
                 }
 
@@ -244,35 +229,7 @@ namespace soa
                 System.Threading.Thread.Sleep(updateSleepTime_ms);
             }
         }
-
-        /// <summary>
-        /// Adds information from data manager to outgoing queue using default source ID
-        /// and broadcasts message to everyone
-        /// </summary>
-        /*public void addOutgoing(Belief b)
-        {
-            addOutgoing(b, defaultSourceID, null);
-        }
-
-        /// <summary>
-        /// Adds multiple beliefs from data manager to outgoing queue using default source ID
-        /// for broadcast to everyone
-        /// </summary>
-        public void addOutgoing(List<Belief> l)
-        {
-            addOutgoing(l, null);
-        }*/
-
-        /// <summary>
-        /// Adds multiple beliefs from data manager to outgoing queue using default source ID
-        /// directed for specified actor
-        /// Use null for targetActorIDs if broadcast
-        /// </summary>
-        public void addOutgoing(List<Belief> l, int[] targetActorIDs)
-        {
-            addOutgoing(l, defaultSourceID, targetActorIDs);
-        }
-
+        
         /// <summary>
         /// Adds multiple beliefs from data manager to outgoing queue using specified source ID
         /// directed for specified actor
@@ -284,6 +241,11 @@ namespace soa
             {
                 addOutgoing(b, sourceID, targetActorIDs);
             }
+        }
+
+        public void addOutgoing(CachedBelief b, int sourceID, int[] targetActorIDs)
+        {
+            addOutgoing(b.GetBelief(), sourceID, targetActorIDs);
         }
 
         /// <summary>
@@ -336,11 +298,7 @@ namespace soa
             else
             {
                 // Something went wrong with serialization
-                #if(UNITY_STANDALONE)
-                Debug.Log("PhotonCloudCommManager: Belief serialization failed");
-                #else
-                Console.Error.WriteLine("PhotonCloudCommManager: Belief serialization failed");
-                #endif
+                Log.debug("PhotonCloudCommManager: Belief serialization failed");
             }
         }
 
@@ -471,11 +429,7 @@ namespace soa
                         else
                         {
                             // Something went wrong with deserialization
-                            #if(UNITY_STANDALONE)
-                            Debug.Log("PhotonCloudCommManager: Belief deserialization failed");
-                            #else
-                            Console.Error.WriteLine("PhotonCloudCommManager: Belief deserialization failed");
-                            #endif
+                            Log.debug("PhotonCloudCommManager: Belief deserialization failed");
                         }
                         break;
                     }
@@ -503,11 +457,7 @@ namespace soa
                             }
                         }else{
                             // Someone else just joined the room, print status message
-                            #if(UNITY_STANDALONE)
-                            Debug.Log("PhotonCloudCommManager: Player " + actorNrJoined + " just joined");
-                            #else
-                            Console.WriteLine("PhotonCloudCommManager: Player " + actorNrJoined + " just joined");
-                            #endif
+                            Log.debug("PhotonCloudCommManager: Player " + actorNrJoined + " just joined");
 
                             // Get initialization beliefs and only send to that player
                             // Use -1 source ID to override comms distances constraints
@@ -525,11 +475,6 @@ namespace soa
         /// </summary>
         private void DebugReturn(string debugStr)
         {
-            #if(UNITY_STANDALONE)
-            //Debug.Log(debugStr);
-            #else
-            //Console.WriteLine(debugStr);            
-            #endif
         }
     }
 }

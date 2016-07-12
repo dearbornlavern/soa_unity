@@ -25,11 +25,7 @@ namespace soa
             catch (System.IO.FileNotFoundException)
             {
                 // Handle error if not found
-                #if(UNITY_STANDALONE)
-                Debug.LogError("EnvConfigXMLReader::Parse(): Could not load " + xmlFilename);
-                #else
-                Console.WriteLine("EnvConfigXMLReader::Parse(): Could not load " + xmlFilename);
-                #endif
+                Log.error("EnvConfigXMLReader::Parse(): Could not load " + xmlFilename);
                 return null;
             }
 
@@ -48,11 +44,8 @@ namespace soa
             if (configNode == null)
             {
                 // Handle error if not found
-                #if(UNITY_STANDALONE)
-                Debug.LogError("EnvConfigXMLReader::Parse(): Could not find \"EnvConfig\" node");
-                #else
-                Console.WriteLine("EnvConfigXMLReader::Parse(): Could not find \"EnvConfig\" node");
-                #endif
+                Log.error("EnvConfigXMLReader::Parse(): Could not find \"EnvConfig\" node");
+               
                 return null;
             }
 
@@ -84,11 +77,7 @@ namespace soa
                         break;
                     default:
                         // Unrecognized
-                        #if(UNITY_STANDALONE)
-                        Debug.LogError("EnvConfigXMLReader::Parse(): Unrecognized node type " + c.Name);
-                        #else
-                        Console.WriteLine("EnvConfigXMLReader::Parse(): Unrecognized node type " + c.Name);
-                        #endif
+                        Log.debug("EnvConfigXMLReader::Parse(): Unrecognized node type " + c.Name);
                         break;
                 }
             }
@@ -120,11 +109,7 @@ namespace soa
                         break;
                     default:
                         // Unrecognized
-                        #if(UNITY_STANDALONE)
-                        Debug.LogError("EnvConfigXMLReader::ParseCells(): Unrecognized node type " + c.Name);
-                        #else
-                        Console.WriteLine("EnvConfigXMLReader::ParseCells(): Unrecognized node type " + c.Name);
-                        #endif
+                        Log.error("EnvConfigXMLReader::ParseCells(): Unrecognized node type " + c.Name);
                         break;
                 }
             }
@@ -135,13 +120,8 @@ namespace soa
             if (node.Attributes[attribute] == null)
             {
                 // Use default and give warning
-                #if(UNITY_STANDALONE)
-                Debug.LogWarning("EnvConfigXMLReader::getIntAttribute(): Could not find attribute " +
+                Log.warning("EnvConfigXMLReader::getIntAttribute(): Could not find attribute " +
                     attribute + " in node " + node.Name + ", using default value of " + defaultValue);
-                #else
-                Console.WriteLine("EnvConfigXMLReader::getIntAttribute(): Could not find attribute " +
-                    attribute + " in node " + node.Name + ", using default value of " + defaultValue);
-                #endif
                 return defaultValue;
             }
             else
@@ -156,13 +136,9 @@ namespace soa
             if (node.Attributes[attribute] == null)
             {
                 // Use default and give warning
-                #if(UNITY_STANDALONE)
-                Debug.LogWarning("EnvConfigXMLReader::getFloatAttribute(): Could not find attribute " +
+                Log.warning("EnvConfigXMLReader::getFloatAttribute(): Could not find attribute " +
                     attribute + " in node " + node.Name + ", using default value of " + defaultValue);
-                #else
-                Console.WriteLine("EnvConfigXMLReader::getFloatAttribute(): Could not find attribute " +
-                    attribute + " in node " + node.Name + ", using default value of " + defaultValue);
-                #endif
+               
                 return defaultValue;
             }
             else

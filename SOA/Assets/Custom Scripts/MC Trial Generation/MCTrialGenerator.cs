@@ -94,7 +94,7 @@ namespace soa
             envConfig = EnvConfigXMLReader.Parse(envConfigFile);
             if (envConfig == null)
             {
-                Console.WriteLine("MCTrialGenerator::Main(): Parsed envConfig is null, exiting");
+                Log.debug("MCTrialGenerator::Main(): Parsed envConfig is null, exiting");
                 return;
             }
 
@@ -396,7 +396,7 @@ namespace soa
             for (int trial = 1; trial <= numMCTrials; trial++)
             {
                 // Status message
-                Console.WriteLine("Generating config file " + soaConfigFileHeader + trial.ToString(toStringFormat) + ".xml");
+                Log.debug("Generating config file " + soaConfigFileHeader + trial.ToString(toStringFormat) + ".xml");
 
                 // Initialize remote platform ID assignment
                 availableRemoteID = remoteStartID;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace soa
 {
-    enum Terrain { MOUNTAIN = 1, WATER = 2 };
+    enum Terrain {NONE = 0, MOUNTAIN = 1, WATER = 2 };
     public class Belief_Terrain : Belief
     {
         // Members
@@ -30,12 +30,16 @@ namespace soa
         public override string ToString()
         {
             string s = "Belief_Terrain {"
-                + "\n" + "  type: " + type;
+                + "\n"
+                + "\ttype=" + type + "\n"
+                + "\ttime=" + getBeliefTime() + "\n"
+                + "\tid=" + getId() + "\n";
+
             for (int i = 0; i < cells.Count; i++)
             {
-                s += "\n  " + cells[i];
+                s += "\t" + cells[i] + "\n";
             }
-            s += "\n" + "}";
+            s += "}";
             return s;
         }
 

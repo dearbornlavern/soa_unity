@@ -42,7 +42,7 @@ namespace soa
         }
 
         // Get methods
-	    public int getId(){ return id; }
+	    public override int getId(){ return id; }
         public List<GridCell> getCells() { return GridCell.cloneList(cells); }
         public float getSupplies() { return supplies; }
     }

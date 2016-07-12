@@ -35,6 +35,11 @@ namespace soa
                 return type;
             }
 
+            public int getCustomType()
+            {
+                return customType;
+            }
+
             public int CompareTo(Key other)
             {
                 if (type == other.type)
@@ -60,6 +65,15 @@ namespace soa
 
                 return other.type == type 
                         && other.customType == customType;
+            }
+
+            public override string ToString()
+            {
+                if (type == BeliefType.CUSTOM)
+                {
+                    return "custom:" + customType;
+                }
+                return type.ToString();
             }
         };
 
@@ -105,7 +119,7 @@ namespace soa
             return new Key(getBeliefType());
         }
 
-        public int getId()
+        public virtual int getId()
         {
             return id;
         }

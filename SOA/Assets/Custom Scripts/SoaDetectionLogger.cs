@@ -61,6 +61,7 @@ public class SoaDetectionLogger {
                 detectedId = reader.ReadInt32();
             }catch(Exception e)
             {
+                Console.Error.WriteLine(e.ToString());
                 time = 0;
                 detectorId = 0;
                 detectedId = 0;

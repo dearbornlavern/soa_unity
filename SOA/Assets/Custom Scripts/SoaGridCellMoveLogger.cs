@@ -61,6 +61,7 @@ public class SoaGridCellMoveLogger {
             }
             catch (Exception e)
             {
+                Console.Error.WriteLine(e.ToString());
                 time = 0;
                 gridU = 0;
                 gridV = 0;

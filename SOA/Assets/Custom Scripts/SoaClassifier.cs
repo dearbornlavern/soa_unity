@@ -24,40 +24,52 @@ public class SoaClassifier : MonoBehaviour
         SoaActor targetActor;
         foreach (GameObject target in detections)
         {
-            // Save pointer to target's SoaActor
-            targetActor = target.GetComponent<SoaActor>();
-
-            // The object being detected must be alive, only classify if we haven't already
-            if (targetActor.isAlive && !thisSoaActor.checkClassified(targetActor.unique_id))
+            try
             {
-                // Loop through all possible classifier modes
-                foreach (PerceptionModality mode in modes)
-                {
-                    // Compute slant range in km
-                    float slantRange = Mathf.Sqrt(
-                        ((transform.position.x - target.transform.position.x) / SimControl.KmToUnity) * ((transform.position.x - target.transform.position.x) / SimControl.KmToUnity) +
-                        (thisSoaActor.simAltitude_km - targetActor.simAltitude_km) * (thisSoaActor.simAltitude_km - targetActor.simAltitude_km) + // Recall that altitude is kept track of separately
-                        ((transform.position.z - target.transform.position.z) / SimControl.KmToUnity) * ((transform.position.z - target.transform.position.z) / SimControl.KmToUnity)
-                    );
+                // Save pointer to target's SoaActor
+                targetActor = target.GetComponent<SoaActor>();
 
-                    // If the game object matches its intended target
-                    if (mode.tagString == target.tag)
+                // The object being detected must be alive, only classify if we haven't already
+                if (targetActor.isAlive && !thisSoaActor.checkClassified(targetActor.unique_id))
+                {
+                    updateClassificationFor(target, targetActor);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.error(e.ToString());
+            }
+        }
+    }
+
+    private void updateClassificationFor(GameObject target, SoaActor targetActor)
+    {
+        // Loop through all possible classifier modes
+        foreach (PerceptionModality mode in modes)
+        {
+            // Compute slant range in km
+            float slantRange = Mathf.Sqrt(
+                ((transform.position.x - target.transform.position.x) / SimControl.KmToUnity) * ((transform.position.x - target.transform.position.x) / SimControl.KmToUnity) +
+                (thisSoaActor.simAltitude_km - targetActor.simAltitude_km) * (thisSoaActor.simAltitude_km - targetActor.simAltitude_km) + // Recall that altitude is kept track of separately
+                ((transform.position.z - target.transform.position.z) / SimControl.KmToUnity) * ((transform.position.z - target.transform.position.z) / SimControl.KmToUnity)
+            );
+
+            // If the game object matches its intended target
+            if (mode.tagString == target.tag)
+            {
+                // Determine whether it was classified
+                if (slantRange <= mode.RangeP1)
+                {
+                    // Successful kill, 100% probabiltiy
+                    thisSoaActor.setClassified(targetActor.unique_id);
+                }
+                else if (slantRange <= mode.RangeMax)
+                {
+                    // Probability of being classified    
+                    if (UnityEngine.Random.value < (mode.RangeMax - slantRange) / (mode.RangeMax - mode.RangeP1))
                     {
-                        // Determine whether it was classified
-                        if (slantRange <= mode.RangeP1)
-                        {
-                            // Successful kill, 100% probabiltiy
-                            thisSoaActor.setClassified(targetActor.unique_id);
-                        }
-                        else if (slantRange <= mode.RangeMax)
-                        {
-                            // Probability of being classified    
-                            if (UnityEngine.Random.value < (mode.RangeMax - slantRange) / (mode.RangeMax - mode.RangeP1))
-                            {
-                                // Target was unlucky and was classified
-                                thisSoaActor.setClassified(targetActor.unique_id);
-                            }
-                        }
+                        // Target was unlucky and was classified
+                        thisSoaActor.setClassified(targetActor.unique_id);
                     }
                 }
             }
